@@ -7,7 +7,7 @@ class FileSystem(object):
     #The class only needs an appropriate .img file
     #to operate. It creates mount points based on the
     #file name of the .img file
-    def __init__(self, image):
+    def __init__(self, image, piaddress):
         #the directory address is reversed due to the .img file name
         #being at the end of it
         tempDirec = image[len(image)::-1]
@@ -28,6 +28,7 @@ class FileSystem(object):
         #where 1 is true and 0 is false. It is used to keep
         #track of the validity of the file in future operations.
         self.valid = 0
+        self.rsync = piaddress
         #if it is a valid file, print out the directory address
         #and set the calid bit to true
         if '.img' in self.image:
@@ -63,7 +64,15 @@ class FileSystem(object):
         if self.valid == 1:
             os.system('sudo umount ' + self.mountone)
             print(self.image + " is no longer mounted")
-
+            
+    #bash sequence to mount, rsync, and unmount the selected image
+    def rsync(self):
+        if self.valid == 1:
+            print(" ")
+            self.mountIMG()
+            os.system('rsync --progress -av --rsh="ssh" ' + self.rsync + ' ' + self.mountone)
+        
+    
 #where the program actually runs
 if __name__=='__main__':
     print(" ")
@@ -72,6 +81,7 @@ if __name__=='__main__':
     print("------------------------------")
     print(" ")
     imageFile = sys.argv[1]
-    fs = FileSystem(imageFile)
+    piAddress = sys.argv[2]
+    fs = FileSystem(imageFile, piAddress)
     fs.mountIMG()
     fs.unmountIMG()
