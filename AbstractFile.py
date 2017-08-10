@@ -35,6 +35,13 @@ class AbstractFile(object):
         elif "/hostname" in self.directory:
             oldname = self.fileArr[0]
             text = re.sub(oldname, self.newname,fileObj)
+            
+         
+        elif "/netconnectd.yaml" in self.directory:
+            oldname = self.fileArr[4][8:]
+            text = re.sub(oldname, self.newname,fileObj)
+            oldname = self.fileArr[5][7:]
+            text = re.sub(oldname, self.newname,fileObj)
 
         fileObj.seek(0)
         fileObj.write(text)
